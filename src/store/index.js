@@ -26,27 +26,28 @@ export default new Vuex.Store({
   },
 
   mutations: {
-    updateNewUser: (state, userData) => {
-      state.newUser = userData
-    },
-
     addUser: (state, userData) => {
-      state.users.push({ ...userData, id: uuid() })
+      state.users.push(userData)
     },
 
     addMeeting: (state, meetingData) => {
-      state.meetings.push({ ...meetingData, id: uuid() })
+      const fixedMeetingData = {
+        ...meetingData,
+        // хак для того, чтобы расшаренная мутация сохраняла даты не в строках
+        date: meetingData.date.map(date => (typeof date === 'string' ? new Date(date) : date)),
+      }
+
+      state.meetings.push(fixedMeetingData)
     },
 
     updateRehydratedDates: (state) => {
-      // console.log(state.meetings.map(meeting => ({ ...meeting, date: meeting.date.map(date => new Date(date)) })))
       state.meetings = state.meetings.map(meeting => ({ ...meeting, date: meeting.date.map(date => new Date(date)) }))
     },
   },
 
   actions: {
-    createUser: async ({ commit }, userData) => commit('addUser', userData),
+    createUser: async ({ commit }, userData) => commit('addUser', { ...userData, id: uuid() }),
 
-    createMeeting: async ({ commit }, meetingData) => commit('addMeeting', meetingData),
+    createMeeting: async ({ commit }, meetingData) => commit('addMeeting', { ...meetingData, id: uuid() }),
   },
 })
