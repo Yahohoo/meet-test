@@ -100,7 +100,6 @@ export default {
     },
 
     resetForm() {
-      console.log('formReseted')
       this.$refs.newUserForm.resetFields()
     },
 
